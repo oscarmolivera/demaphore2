@@ -4,3 +4,14 @@ Metrics/MethodLength:
   Max: 7
   Exclude:
     - 'bin/bundle'
+    - 'db/migrate/*'
+
+Layout/LineLength:
+  Exclude:
+    - 'config/initializers/devise.rb'
+
+Style/Documentation:
+    Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
