@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe 'Api::V1::Users', type: :request do
+  include JsonHelpers
   describe 'POST /api/v1/users' do
     let(:user_params) do
       { email: 'user@duetcode.io', password: 'samplepassword' }
@@ -8,10 +9,16 @@ RSpec.describe 'Api::V1::Users', type: :request do
 
     it 'create a new user' do
       post api_v1_users_path, params: { user: user_params }
-      expected_body = { 'email' => 'user@duetcode.io' }
+      expected_body = {
+        'data' => {
+          'attributes' => {
+            'email' => user_params[:email]
+          },
+        }
+      }
 
       expect(response).to have_http_status(:created)
-      expect(JSON.parse(response.body)).to include(expected_body)
+      expect(load_body(response)['data']['attributes']).to include(expected_body['data']['attributes'])
     end
 
     it 'returns unprocessable entity with errors' do
@@ -21,7 +28,7 @@ RSpec.describe 'Api::V1::Users', type: :request do
       expected_error = { 'password' => ['can\'t be blank'] }
 
       expect(response).to have_http_status(:unprocessable_entity)
-      expect(JSON.parse(response.body)).to eq(expected_error)
+      expect(load_body(response)).to eq(expected_error)
     end
   end
 end
